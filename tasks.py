@@ -248,4 +248,140 @@ def summarize_tests(tests):
 
     return res
 
+#  Find top failing suites
+# tests = [
+#   {"suite": "smoke", "status": "pass"},
+#   {"suite": "smoke", "status": "fail"},
+#   {"suite": "regression", "status": "fail"},
+#   {"suite": "regression", "status": "fail"},
+#   {"suite": "api", "status": "pass"},
+#   {"suite": "api", "status": "fail"},
+# ]
+
+#[("regression", 2), ("api", 1), ("smoke", 1)]
+
+def top_failing_suites(tests):
+
+    res = {}
+    suites = []
+
+    for test in tests:
+        suite = test['suite']
+        status = test['status']
+
+        if suite not in res:
+            res[suite] = 0
+
+        if status == 'fail':
+            res[suite] += 1
+
+    for k, v in res.items():
+        suites.append((k, v))
+
+    return sorted(suites, key=lambda x: (-x[1], x[0]))
+
+# Top N error messages
+# logs = [
+#   "INFO start",
+#   "ERROR timeout",
+#   "WARN low memory",
+#   "ERROR timeout",
+#   "ERROR invalid token",
+#   "INFO end",
+#   "ERROR timeout",
+#   "ERROR invalid token",
+# ]
+
+#[("timeout", 3), ("invalid token", 2)]
+
+def top_errors(logs, n):
+
+    errors = {}
+
+    for log in logs:
+        if log.startswith("ERROR "):
+            error = log[len("ERROR "):]
+            if error not in errors:
+                errors[error] = 0
+
+            errors[error] += 1
+
+    res = [(k, v) for k, v in errors.items()]
+
+    res = sorted(res, key=lambda x: (-x[1], x[0]))
+
+    return res[:n]
+
+# Longest Common Prefix
+# ["flower", "flow", "flight"] -> "fl"
+# ["dog", "racecar", "car"] -> ""
+# ["test"] -> "test"
+# [] -> ""
+# ["", "abc"] -> ""
+# min(["flower", "flow", "flight"]) -> "flight"
+# max(["flower", "flow", "flight"]) -> "flower"
+def longest_common_prefix(strs):
+    if not strs:
+        return ""
+
+    s1 = min(strs)
+    s2 = max(strs)
+
+    i = 0
+    while i < len(s1) and i < len(s2) and s1[i] == s2[i]:
+        i += 1
+
+    return s1[:i]
+
+#Common Prefix Length
+# ("flight", "flow") -> 2   # "fl"
+# ("abc", "abc") -> 3
+# ("abc", "z") -> 0
+# ("", "abc") -> 0
+def common_prefix_len(a: str, b: str) -> int:
+    l = 0
+
+    while len(a) > l and len(b) > l and a[l] == b[l]:
+        l +=1
+
+    return l
+
+#  Two pointers
+# a=[1,2,2], b=[2,3] -> [1,2,2,2,3]
+def has_pair_sum(nums, target):
+    left, right = 0, len(nums) - 1
+
+    while left < right:
+        s = nums[left] + nums[right]
+        if s == target:
+            return True
+        if s < target:
+            left += 1
+        else:
+            right -= 1
+
+    return False
+
+# Check subsequence
+# is_subsequence(s, t), которая возвращает True, если строка s является подпоследовательностью t.
+# s="abc", t="ahbgdc" -> True
+def is_subsequence(s, t):
+    i = 0
+    j = 0
+
+    if not s:
+        return True
+
+    if not t:
+        return False
+
+    while j < len(t) and i < len(s):
+        if s[i] == t[j]:
+            i += 1
+            j += 1
+        else:
+            j += 1
+
+    return i == len(s)
+
 
